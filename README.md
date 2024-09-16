@@ -26,7 +26,7 @@
    - **Master Avatar Sandbox Password:** Passwort für den Master-Avatar im Sandbox-Modus.
 
 3. **Spiral-Typ auswählen**
-   - **Spiral Type:** Wählen Sie aus, ob die Region in einer der 17 Spiraltypen hinzugefügt werden soll. Nutzen Sie das Dropdown-Menü neben „Spiral Type“.
+   - **Spiral Type:** Wählen Sie aus, ob die Region in einer der 14 Spiraltypen hinzugefügt werden soll. Nutzen Sie das Dropdown-Menü neben „Spiral Type“.
 
 4. **Region hinzufügen**
    - **Add Region:** Klicken Sie auf den Button „Add Region“, um eine neue Region hinzuzufügen. Die Position der neuen Region wird automatisch berechnet und angezeigt.

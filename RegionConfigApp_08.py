@@ -38,11 +38,16 @@ class CaseConfigParser(configparser.ConfigParser):
 class RegionConfigApp:
     def __init__(self, root):
         self.root = root
+
+        # Set window icon
+        self.root.iconbitmap("icon.ico")
+
+        # Set window title
         self.root.title("Region Configurations")
 
         # Set window size
         self.root.geometry("450x700")
-
+        
         # Initialize variables with default values
         self.region_name = tk.StringVar(value=generate_random_name())
         self.region_uuid = tk.StringVar(value=str(uuid.uuid4()))

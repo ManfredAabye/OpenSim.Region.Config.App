@@ -71,7 +71,7 @@ class RegionConfigApp:
 		self.clamp_prim_size = tk.BooleanVar(value=False)
 		self.max_prims_per_user = tk.IntVar(value=-1)
 		self.scope_id = tk.StringVar(value=self.region_uuid.get())
-		self.region_type = tk.StringVar(value="")        
+		self.region_type = tk.StringVar(value="Main")        
 		self.render_min_height = tk.IntVar(value=-1)
 		self.render_max_height = tk.IntVar(value=100)
 		self.maptile_static_file = tk.StringVar(value="SomeFile.png")
@@ -148,11 +148,11 @@ class RegionConfigApp:
 				entry = tk.Entry(scrollable_frame, textvariable=var, width=40)
 				entry.grid(row=idx, column=1, sticky=tk.W, pady=2, padx=5)
 
-			# Dropdown for spiral selection
-			self.spiral_type = tk.StringVar(value="flower") # Fix: Make sure the initial value of self.spiral_type is set correctly, which is already done with the line
-			tk.Label(scrollable_frame, text="Spiral Type:").grid(row=len(fields), column=0, sticky=tk.W, pady=2, padx=5)
-			spiral_menu = tk.OptionMenu(scrollable_frame, self.spiral_type, "archimedean_spiral1", "archimedean_spiral2", "circle1", "circle2", "fibonacci_spiral", "flower", "grid1", "grid2", "logarithmic_spiral", "logistic", "random1", "random2", "star")        
-			spiral_menu.grid(row=len(fields), column=1, sticky=tk.W, pady=2, padx=5)
+		# Dropdown for spiral selection
+		self.spiral_type = tk.StringVar(value="flower") # Fix: Make sure the initial value of self.spiral_type is set correctly, which is already done with the line
+		tk.Label(scrollable_frame, text="Spiral Type:").grid(row=len(fields), column=0, sticky=tk.W, pady=2, padx=5)
+		spiral_menu = tk.OptionMenu(scrollable_frame, self.spiral_type, "archimedean_spiral1", "archimedean_spiral2", "circle1", "circle2", "fibonacci_spiral", "flower", "grid1", "grid2", "logarithmic_spiral", "logistic", "random1", "random2", "star")        
+		spiral_menu.grid(row=len(fields), column=1, sticky=tk.W, pady=2, padx=5)
 
 		button_frame = tk.Frame(scrollable_frame)
 		button_frame.grid(row=len(fields) + 1, column=0, columnspan=2, pady=10)
@@ -160,6 +160,127 @@ class RegionConfigApp:
 		tk.Button(button_frame, text="Add Region", command=self.add_region).pack(side="left", padx=10)
 		tk.Button(button_frame, text="Save Config", command=self.save_config).pack(side="left", padx=10)
 
+	def next_flower_spiral_location1(self):
+		# Calculate the next position using a flower-like spiral
+		self.angle += 137.5  # Golden angle in degrees
+		radians = math.radians(self.angle)
+		location_x = 1000 + int(self.radius * math.cos(radians))
+		location_y = 1000 + int(self.radius * math.sin(radians))
+		self.radius += 1  # Increment the radius gradually for the next point
+		return location_x, location_y
+
+	def next_fibonacci_spiral_location(self):
+		# Calculate the next position using the Fibonacci spiral
+		self.angle += 137.5  # Golden angle in degrees
+		radians = math.radians(self.angle)
+		self.radius *= 1.618  # Fibonacci increment
+		location_x = 1000 + int(self.radius * math.cos(radians))
+		location_y = 1000 + int(self.radius * math.sin(radians))
+		return location_x, location_y
+
+	def next_archimedean_spiral_location2(self):
+		self.angle += 10  # Increment angle by a fixed value
+		radians = math.radians(self.angle)
+		location_x = 1000 + int(self.radius * math.cos(radians))
+		location_y = 1000 + int(self.radius * math.sin(radians))
+		self.radius += 10  # Increment the radius linearly for a smooth spiral
+		return location_x, location_y
+
+	def next_logarithmic_spiral_location(self):
+		self.angle += 10  # Increase angle gradually
+		radians = math.radians(self.angle)
+		self.radius *= 1.1  # Exponentially increase the radius
+		location_x = 1000 + int(self.radius * math.cos(radians))
+		location_y = 1000 + int(self.radius * math.sin(radians))
+		return location_x, location_y
+
+	def next_random_location1(self):
+		location_x = random.randint(0, 2000)
+		location_y = random.randint(0, 2000)
+		return location_x, location_y
+
+	def next_grid_location1(self):
+		location_x = 1000 + (self.index % 10) * 100  # Move horizontally
+		location_y = 1000 + (self.index // 10) * 100  # Move vertically
+		self.index += 1
+		return location_x, location_y
+
+	def next_circle_location1(self):
+		self.angle += 36  # Divide 360 degrees by 10 points
+		radians = math.radians(self.angle)
+		radius = 500  # Constant radius
+		location_x = 1000 + int(radius * math.cos(radians))
+		location_y = 1000 + int(radius * math.sin(radians))
+		return location_x, location_y
+
+	def next_star_location(self):
+		self.angle += 144  # Star angle (5 points)
+		radians = math.radians(self.angle)
+		location_x = 1000 + int(self.radius * math.cos(radians))
+		location_y = 1000 + int(self.radius * math.sin(radians))
+		return location_x, location_y
+
+	def next_logistic_function_location(self):
+		self.angle += 10
+		radians = math.radians(self.angle)
+		K = 2000  # Carrying capacity (limit of growth)
+		location_x = 1000 + int(self.radius * (K / (1 + math.exp(-0.1 * self.angle))) * math.cos(radians))
+		location_y = 1000 + int(self.radius * (K / (1 + math.exp(-0.1 * self.angle))) * math.sin(radians))
+		return location_x, location_y
+
+	def next_grid_location2(self):
+		# Define grid parameters
+		grid_size = 100  # Distance between grid points
+		num_columns = 10  # Number of columns in the grid
+
+		# Calculate row and column based on the current index
+		row = self.index // num_columns
+		column = self.index % num_columns
+
+		# Calculate the x, y position
+		location_x = 1000 + column * grid_size
+		location_y = 1000 + row * grid_size
+
+		# Increment the index for the next call
+		self.index += 1
+
+		return location_x, location_y
+
+	def next_circle_location2(self):
+		num_points = 20  # Total number of points on the circle
+		radius = 200  # Fixed radius of the circle
+
+		# Calculate the angle for the current point
+		angle = (2 * math.pi / num_points) * self.index
+		location_x = 1000 + int(radius * math.cos(angle))
+		location_y = 1000 + int(radius * math.sin(angle))
+
+		# Increment the index for the next call
+		self.index += 1
+
+		return location_x, location_y
+
+	def next_archimedean_spiral_location1(self):
+		# Increase the angle
+		self.angle += 10  # Change the step size for tighter or looser spirals
+		radians = math.radians(self.angle)
+
+		# Archimedean spiral equation: r = a + b * theta
+		a = 5  # Adjust this value for initial distance from the center
+		b = 5  # Adjust for spacing between spiral arms
+		self.radius = a + b * self.angle
+
+		location_x = 1000 + int(self.radius * math.cos(radians))
+		location_y = 1000 + int(self.radius * math.sin(radians))
+
+		return location_x, location_y
+
+	def next_random_location2(self):
+		# Define the bounds for random placement
+		location_x = random.randint(800, 1200)
+		location_y = random.randint(800, 1200)
+
+		return location_x, location_y
 
 	def add_region(self):
 		# Determine which spiral to use
@@ -185,7 +306,7 @@ class RegionConfigApp:
 		elif self.spiral_type.get() == "grid2":
 			location = self.next_grid_location2()
 		elif self.spiral_type.get() == "circle2":
-				location = self.next_circle_location2()
+			location = self.next_circle_location2()
 		elif self.spiral_type.get() == "archimedean_spiral2":
 			location = self.next_archimedean_spiral_location2()
 		elif self.spiral_type.get() == "random2":
@@ -193,9 +314,9 @@ class RegionConfigApp:
 
 		if location is None:
 			messagebox.showerror("Error", "No spiral selected")
-		return
+			return
 
-		# Ensure location_x and location_y are not negative
+		# Code for adding the region
 		location_x, location_y = max(location[0], 0), max(location[1], 0)
 
 		# Adjust size to one of the specified values
@@ -205,18 +326,19 @@ class RegionConfigApp:
 			current_size = max([size for size in valid_sizes if size <= current_size], default=256)
 			self.size.set(current_size)
 
-			self.locations.append((location_x, location_y))
+		self.locations.append((location_x, location_y))
 
-			new_uuid = str(uuid.uuid4())
+		new_uuid = str(uuid.uuid4())
 
-			self.region_count += 1
-			self.region_name.set(generate_random_name())
-			self.region_uuid.set(new_uuid)
-			self.internal_port.set(self.internal_port.get() + 1)
+		self.region_count += 1
+		self.region_name.set(generate_random_name())
+		self.region_uuid.set(new_uuid)
+		self.internal_port.set(self.internal_port.get() + 1)
 
-			self.location.set(f"{location_x},{location_y}")  # Update the location
+		self.location.set(f"{location_x},{location_y}")  # Update the location
+		#self.location.set(f"{location[0]},{location[1]}")  # Update the location
 
-			messagebox.showinfo("Region Added", f"Region {self.region_name.get()} added. Location: ({location_x},{location_y})")
+		messagebox.showinfo("Region Added", f"Region {self.region_name.get()} added. Location: ({location_x},{location_y})")
 
 	def save_config(self):
 		filename = filedialog.asksaveasfilename(defaultextension=".ini", filetypes=[("INI files", "*.ini")])
@@ -224,42 +346,42 @@ class RegionConfigApp:
 		if filename:
 			config = CaseConfigParser()  # Use the custom parser to preserve case
 
-			for i in range(1, self.region_count + 1):
-				if i == 1:
-					region_name = self.region_name.get()
-					region_uuid = self.region_uuid.get()
-					location_x, location_y = map(int, self.location.get().split(','))  # First region
-				else:
-					region_name = generate_random_name()
-					region_uuid = str(uuid.uuid4())
-					location_x, location_y = self.locations[i-1]  # Specific location for each region
+		for i in range(1, self.region_count + 1):
+			if i == 1:
+				region_name = self.region_name.get()
+				region_uuid = self.region_uuid.get()
+				location_x, location_y = map(int, self.location.get().split(','))  # First region
+			else:
+				region_name = generate_random_name()
+				region_uuid = str(uuid.uuid4())
+				location_x, location_y = self.locations[i-1]  # Specific location for each region
 
-		config[region_name] = {
-			"RegionUUID": region_uuid,
-			"Location": f"{location_x},{location_y}",
-			"SizeX": self.size.get(),
-			"SizeY": self.size.get(),
-			"SizeZ": self.size.get(),
-			"InternalPort": self.internal_port.get() + (i - 1),
-			"InternalAddress": self.internal_address.get(),
-			"AllowAlternatePorts": str(self.allow_alt_ports.get()),
-			"ExternalHostName": self.external_host.get(),
-			"MaxPrims": self.max_prims.get(),
-			"MaxAgents": self.max_agents.get(),
-			"MaxPrimsPerUser": self.max_prims_per_user.get(),
-			";MaptileStaticUUID": self.maptile_uuid.get(),
-			";NonPhysicalPrimMax": self.non_physical_prim_max.get(),
-			";PhysicalPrimMax": self.physical_prim_max.get(),
-			";ClampPrimSize": str(self.clamp_prim_size.get()),
-			";ScopeID": self.scope_id.get(),
-			";RegionType": self.region_type.get(),
-			";RenderMinHeight": self.render_min_height.get(),
-			";RenderMaxHeight": self.render_max_height.get(),
-			";MaptileStaticFile": self.maptile_static_file.get(),
-			";MasterAvatarFirstName": self.master_avatar_first_name.get(),
-			";MasterAvatarLastName": self.master_avatar_last_name.get(),
-			";MasterAvatarSandboxPassword": self.master_avatar_sandbox_password.get(),
-		}
+			config[region_name] = {
+				"RegionUUID": region_uuid,
+				"Location": f"{location_x},{location_y}",
+				"SizeX": self.size.get(),
+				"SizeY": self.size.get(),
+				"SizeZ": self.size.get(),
+				"InternalPort": self.internal_port.get() + (i - 1),
+				"InternalAddress": self.internal_address.get(),
+				"AllowAlternatePorts": str(self.allow_alt_ports.get()),
+				"ExternalHostName": self.external_host.get(),
+				"MaxPrims": self.max_prims.get(),
+				"MaxAgents": self.max_agents.get(),
+				"MaxPrimsPerUser": self.max_prims_per_user.get(),
+				";MaptileStaticUUID": self.maptile_uuid.get(),
+				";NonPhysicalPrimMax": self.non_physical_prim_max.get(),
+				";PhysicalPrimMax": self.physical_prim_max.get(),
+				";ClampPrimSize": str(self.clamp_prim_size.get()),
+				";ScopeID": self.scope_id.get(),
+				";RegionType": self.region_type.get(),
+				";RenderMinHeight": self.render_min_height.get(),
+				";RenderMaxHeight": self.render_max_height.get(),
+				";MaptileStaticFile": self.maptile_static_file.get(),
+				";MasterAvatarFirstName": self.master_avatar_first_name.get(),
+				";MasterAvatarLastName": self.master_avatar_last_name.get(),
+				";MasterAvatarSandboxPassword": self.master_avatar_sandbox_password.get()
+			}
 
 		with open(filename, 'w') as configfile:
 			config.write(configfile)
